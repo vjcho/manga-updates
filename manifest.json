@@ -12,5 +12,8 @@
   },
   "permissions": [
     "storage"
-  ]
+  ],
+  "content_scripts": {
+    "js":["lib/jquery-3.3.1.min.js", "manga.js"]
+  }
 }

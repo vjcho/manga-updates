@@ -1,26 +1,28 @@
 
-function appendManga(manga) {
-    document.getElementById("mangaList").innerHTML += "<p>" + manga + "</p>";
+function appendManga(title, manga) {
+    $("#mangaList").append("<p>" + title + " - Ch " + manga['latestChapter'] + "</p>");
 }
 
 function saveManga() {
-    var mangaTitle = document.getElementById("mangaTitle").value;
+    var mangaTitle = $("#mangaTitle").val();
 
     // Save title to sync storage
     chrome.storage.sync.get("mangaUpdates", function(data) {
-        data["mangaUpdates"][mangaTitle] = {
+        mangaObj = {
           "latestChapter": 0,
           "read": true
         };
 
+        data["mangaUpdates"][mangaTitle] = mangaObj;
+
         chrome.storage.sync.set(data, function() {
-            appendManga(mangaTitle);
+            appendManga(mangaTitle, mangaObj);
         });
     });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById("saveButton").addEventListener("click", saveManga);
+$(document).ready(function() {
+    $("#saveButton").click(saveManga);
 
     // If no mangaUpdates obj, create new one
     chrome.storage.sync.get(null, function(data) {
@@ -28,9 +30,10 @@ document.addEventListener('DOMContentLoaded', function() {
             chrome.storage.sync.set({"mangaUpdates": {}});
         else {
             // Display saved manga
-            for (var manga in data['mangaUpdates']) {
+            var mangaList = data['mangaUpdates'];
+            for (var manga in mangaList) {
                 console.log(manga);
-                appendManga(manga);
+                appendManga(manga, mangaList[manga]);
             }
         }
     });
