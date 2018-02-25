@@ -11,9 +11,11 @@
     "default_title": "Manga Updates"
   },
   "permissions": [
-    "storage"
+    "storage",
+    "http://*/*"
   ],
-  "content_scripts": {
-    "js":["lib", "manga.js"]
-  }
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "js":["lib/jquery-3.3.1.min.js", "manga.js"]
+  }]
 }
