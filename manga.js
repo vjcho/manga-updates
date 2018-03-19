@@ -1,6 +1,7 @@
 
 function appendManga(manga) {
-    $("#mangaList").append('<a href="http:' + manga['latestChapterLink'] + '">' + manga['title'] + ' - Ch' + manga['latestChapter'] + "</a><br>");
+    var linkStr = '<a href="' + manga['latestChapterLink'] + '">' + manga['title'] + ' - Ch' + manga['latestChapter'] + '</a>';
+    $("#mangaList").append('<div class="mangaItem">' + linkStr + '</div>');
 }
 
 function getMangaData(mangaPage) {
@@ -10,7 +11,7 @@ function getMangaData(mangaPage) {
     var mangaTitle = $(mangaPage).find("div h1.title").text();
 
     var latestChapterData = $(mangaPage).find(".detail_list ul li").first().find("a");
-    var latestChapterLink = $(latestChapterData).attr("href");
+    var latestChapterLink = "http:" + $(latestChapterData).attr("href");
     var latestChapter = $(latestChapterData).text().trim().split(" ").pop().trim();
 
     mangaObj["title"] = mangaTitle;
@@ -46,16 +47,19 @@ function updateMangaList(mangaUrl) {
         var manga_updates = $(response).find(".manga_updates").children();
 
         manga_updates.each(function() {
-            var title = $(this).find("dt a").text();
-            var latestChapter = $(this).find("dd a").last().text();
-            var chapterNumber = latestChapter.match(/\d+$/)[0];
+            var mangaPage = "http:" + $(this).find("dt a").attr("href");
+            var latestChapter = $(this).find("dd a").first().text();
+            var chapterNumber = latestChapter.trim().split(" ").pop().trim();
+            var latestChapterLink = "http:" + $(this).find("dd a").attr("href");
 
             chrome.storage.sync.get("mangaUpdates", function(data) {
-                if (title in data["mangaUpdates"]) {
-                    var updateObj = data;
-                    updateObj["mangaUpdates"][title]["latestChapter"] = chapterNumber;
-                    chrome.storage.sync.set(updateObj);
+                var mangaUpdates = data["mangaUpdates"]
+                if (mangaPage in mangaUpdates) {
+                    mangaUpdates[mangaPage]["latestChapterLink"] = latestChapterLink;
+                    data["mangaUpdates"] = mangaUpdates;
+                    chrome.storage.sync.set(data);
                 }
+
             });
         });
     });
