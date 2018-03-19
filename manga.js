@@ -1,6 +1,6 @@
 
 function appendManga(manga) {
-    var linkStr = '<a href="' + manga['latestChapterLink'] + '">' + manga['title'] + ' - Ch' + manga['latestChapter'] + '</a>';
+    var linkStr = '<a href="' + manga['latestChapterLink'] + '">' + manga['title'] + ' - Ch ' + manga['latestChapter'] + '</a>';
     $("#mangaList").append('<div class="mangaItem">' + linkStr + '</div>');
 }
 
@@ -55,6 +55,7 @@ function updateMangaList(mangaUrl) {
             chrome.storage.sync.get("mangaUpdates", function(data) {
                 var mangaUpdates = data["mangaUpdates"]
                 if (mangaPage in mangaUpdates) {
+                    mangaUpdates[mangaPage]["latestChapter"] = chapterNumber;
                     mangaUpdates[mangaPage]["latestChapterLink"] = latestChapterLink;
                     data["mangaUpdates"] = mangaUpdates;
                     chrome.storage.sync.set(data);
