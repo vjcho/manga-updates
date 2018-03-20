@@ -22,9 +22,7 @@ function getMangaData(mangaPage) {
     return mangaObj;
 }
 
-function saveManga() {
-    var mangaUrl = $("#mangaUrl").val();
-
+function saveManga(mangaUrl) {
     // Get data from url
     $.get(mangaUrl, function(response) {
         var mangaObj = getMangaData(response);
@@ -41,7 +39,8 @@ function saveManga() {
     });
 }
 
-function updateMangaList(mangaUrl) {
+// Update from "latest" page
+function updateLatest(mangaUrl) {
     $.get(mangaUrl, function(response) {
         console.log("Updating manga");
         var manga_updates = $(response).find(".manga_updates").children();
@@ -60,33 +59,43 @@ function updateMangaList(mangaUrl) {
                     data["mangaUpdates"] = mangaUpdates;
                     chrome.storage.sync.set(data);
                 }
-
             });
         });
     });
 }
 
+// Update from each individual manga's page
+function updateSavedManga() {
+    chrome.storage.sync.get("mangaUpdates", function(data) {
+        var mangaUpdates = data["mangaUpdates"];
+        for (var manga in mangaUpdates) {
+            saveManga(manga);
+        }
+    });
+}
+
 $(document).ready(function() {
-    $("#saveButton").click(saveManga);
+    $("#saveButton").click(function() {
+        var mangaUrl = $("#mangaUrl").val();
+        saveManga(mangaUrl);
+    });
 
     $('#mangaList').on('click', 'a', function(){
         chrome.tabs.create({url: $(this).attr('href')});
         return false;
-   });
-
-    // If no mangaUpdates obj, create new one
-    chrome.storage.sync.get(null, function(data) {
-        console.log(data);
-        if (!('mangaUpdates' in data))
-            chrome.storage.sync.set({"mangaUpdates": {}});
-        else {
-            // Display saved manga
-            var mangaList = data['mangaUpdates'];
-            for (var manga in mangaList) {
-                appendManga(mangaList[manga]);
-            }
-        }
     });
 
-    updateMangaList("http://www.mangahere.cc/latest/");
+    chrome.alarms.getAll(function(data) {
+        console.log(data);
+    });
+
+    chrome.storage.sync.get(null, function(data) {
+        // Display saved manga
+        var mangaList = data['mangaUpdates'];
+        for (var manga in mangaList) {
+            appendManga(mangaList[manga]);
+        }
+
+        updateLatest("http://www.mangahere.cc/latest/");
+    });
 });
