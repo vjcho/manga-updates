@@ -1,9 +1,6 @@
 chrome.runtime.onInstalled.addListener(function() {
     // Create alarm if not already existing
-    chrome.alarms.get("checkLatestAlarm", function(alarm) {
-        if (!alarm)
-            chrome.alarms.create("checkLatestAlarm", {periodInMinutes: 30} );
-    }); 
+    chrome.alarms.create("checkLatestAlarm", {periodInMinutes: 30} );
 
     // Create mangaUpdates object if not already existing
     chrome.storage.sync.get(null, function(data) {
@@ -15,14 +12,12 @@ chrome.runtime.onInstalled.addListener(function() {
 
 chrome.runtime.onStartup.addListener(function() {
     // Check each manga's page and update
-    alarm("onStartup");
+    alert("onStartup");
     updateSavedManga();
 });
 
 // Check latest page every hour
 chrome.alarms.onAlarm.addListener(function(alarm) {
-    if (alarm.name == 'checkLatestAlarm') {
-        alert("updating latest");
+    if (alarm.name == 'checkLatestAlarm')
         updateLatest();
-    }
 });

@@ -1,7 +1,14 @@
 
 function appendManga(manga) {
     var linkStr = '<a href="' + manga['latestChapterLink'] + '">' + manga['title'] + ' - Ch ' + manga['latestChapter'] + '</a>';
-    $("#mangaList").append('<div class="mangaItem">' + linkStr + '</div>');
+    var xStr = '<img class="deleteBtn" value="' + manga['mangaLink'] + '" src="/img/x.svg">';
+    $("#mangaList").append('<div class="mangaItem">' + linkStr + xStr + '</div>');
+}
+
+function displayMangaList(mangaList) {
+    for (var manga in mangaList) {
+        appendManga(mangaList[manga]);
+    }
 }
 
 function getMangaData(mangaPage) {
@@ -80,7 +87,7 @@ $(document).ready(function() {
         saveManga(mangaUrl);
     });
 
-    $('#mangaList').on('click', 'a', function(){
+    $('#mangaList').on('click', 'a', function() {
         chrome.tabs.create({url: $(this).attr('href')});
         return false;
     });
@@ -92,10 +99,23 @@ $(document).ready(function() {
     chrome.storage.sync.get(null, function(data) {
         // Display saved manga
         var mangaList = data['mangaUpdates'];
-        for (var manga in mangaList) {
-            appendManga(mangaList[manga]);
-        }
+        displayMangaList(mangaList);
+    });
 
-        updateLatest("http://www.mangahere.cc/latest/");
+    updateLatest("http://www.mangahere.cc/latest/");
+});
+
+$(document).on('click', '.deleteBtn', function() {
+    var mangaLink = $(this).attr('value');
+    var div = $(this).parent();
+
+    chrome.storage.sync.get("mangaUpdates", function(data) {
+        var mangaUpdates = data['mangaUpdates'];
+        delete mangaUpdates[mangaLink];
+        data['mangaUpdates'] = mangaUpdates;
+
+        chrome.storage.sync.set(data, function() {
+            div.remove();
+        });
     });
 });
