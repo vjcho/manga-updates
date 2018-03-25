@@ -12,7 +12,6 @@ chrome.runtime.onInstalled.addListener(function() {
 
 chrome.runtime.onStartup.addListener(function() {
     // Check each manga's page and update
-    alert("onStartup");
     updateSavedManga();
 });
 

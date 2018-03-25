@@ -1,7 +1,7 @@
 
-function appendManga(manga) {
-    var linkStr = '<a href="' + manga['latestChapterLink'] + '">' + manga['title'] + ' - Ch ' + manga['latestChapter'] + '</a>';
-    var xStr = '<img class="deleteBtn" value="' + manga['mangaLink'] + '" src="/img/x.svg">';
+function appendManga(mangaObj, chChoices) {
+    var linkStr = '<a href="' + mangaObj['latestChapterLink'] + '">' + mangaObj['title'] + ' - Ch ' + mangaObj['latestChapter'] + '</a>';
+    var xStr = '<img class="deleteBtn" value="' + mangaObj['mangaLink'] + '" src="/img/x.svg">';
     $("#mangaList").append('<div class="mangaItem">' + linkStr + xStr + '</div>');
 }
 
@@ -17,13 +17,22 @@ function getMangaData(mangaPage) {
     console.log("Getting manga data");
     var mangaTitle = $(mangaPage).find("div h1.title").text();
 
-    var latestChapterData = $(mangaPage).find(".detail_list ul li").first().find("a");
+    var chapterList = $(mangaPage).find(".detail_list ul").first();
+    var latestChapterData = $(chapterList).find("li").first().find("a");
     var latestChapterLink = "http:" + $(latestChapterData).attr("href");
     var latestChapter = $(latestChapterData).text().trim().split(" ").pop().trim();
+
+    var firstChapterData = $(chapterList).find("li").last().find("a");
+    var firstChapterLink = "http:" + $(firstChapterData).attr("href");
+    var firstChapter = $(firstChapterData).text().trim().split(" ").pop().trim();
 
     mangaObj["title"] = mangaTitle;
     mangaObj["latestChapterLink"] = latestChapterLink;
     mangaObj["latestChapter"] = latestChapter;
+
+    // Default current chapter to first chapter
+    mangaObj["currentChapterLink"] = firstChapterLink;
+    mangaObj["currentChapter"] = firstChapter;
 
     console.log(mangaObj);
     return mangaObj;
