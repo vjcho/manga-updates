@@ -25,9 +25,6 @@
       }
 
       .deleteBtn {
-        float: right;
-        vertical-align: middle;
-        padding-top:5px;
         opacity: 0.5;
       }
 
@@ -39,6 +36,10 @@
       #mangaList {
         padding: 6px;
         margin-top:5px;
+      }
+
+      th {
+        text-align: left;
       }
     </style>
 
@@ -52,6 +53,14 @@
       MangaHere URL: <input type="text" id="mangaUrl">
       <button id="saveButton">Save</button>
     </div>
-    <div id="mangaList"></div>
+    <!-- <div id="mangaList"></div> -->
+    <table id="mangaList" style="width:100%">
+      <tr>
+        <th>Manga</th>
+        <th>Current</th>
+        <th>Latest</th>
+        <th></th>
+      </tr>
+    </table>
   </body>
 </html>

@@ -1,8 +1,16 @@
 
 function appendManga(mangaObj, chChoices) {
-    var linkStr = '<a href="' + mangaObj['latestChapterLink'] + '">' + mangaObj['title'] + ' - Ch ' + mangaObj['latestChapter'] + '</a>';
-    var xStr = '<img class="deleteBtn" value="' + mangaObj['mangaLink'] + '" src="/img/x.svg">';
-    $("#mangaList").append('<div class="mangaItem">' + linkStr + xStr + '</div>');
+    var $row = $('<tr></tr>');
+    var mangaTitle = '<td><a href="' + mangaObj['mangaLink'] + '">' + mangaObj['title'] + '</a></td>';
+    var currentCh = '<td><a href="' + mangaObj['currentChapterLink'] + '">' + mangaObj['currentChapter'] + '</a></td>';
+    var latestCh = '<td><a href="' + mangaObj['latestChapterLink'] + '">' + mangaObj['latestChapter'] + '</a></td>';
+    var xStr = '<td align="center"><img class="deleteBtn" value="' + mangaObj['mangaLink'] + '" src="/img/x.svg"></td>';
+
+    $row.append(mangaTitle);
+    $row.append(currentCh);
+    $row.append(latestCh);
+    $row.append(xStr);
+    $("#mangaList").append($row);
 }
 
 function displayMangaList(mangaList) {
@@ -116,7 +124,7 @@ $(document).ready(function() {
 
 $(document).on('click', '.deleteBtn', function() {
     var mangaLink = $(this).attr('value');
-    var div = $(this).parent();
+    var div = $(this).closest("tr");
 
     chrome.storage.sync.get("mangaUpdates", function(data) {
         var mangaUpdates = data['mangaUpdates'];
